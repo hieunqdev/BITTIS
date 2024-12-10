@@ -40,6 +40,7 @@ public class KhachHangController extends HttpServlet {
 		String action = request.getParameter("action");
 		
 		switch (path) {
+//		    đăng ký
 			case "/register":
 				if (action.equals("register")) {
 					try {
@@ -48,6 +49,7 @@ public class KhachHangController extends HttpServlet {
 						e.printStackTrace();
 					}
 				}
+//			đăng nhập
 			case "/login":
 				if(action.equals("login")) {
 					try {
@@ -99,6 +101,7 @@ public class KhachHangController extends HttpServlet {
 		
 		KhachHangDAO khd = new KhachHangDAO();
 		boolean result = khd.login(email, matKhau);
+//		nếu đăng nhập thành công sẽ lưu phiên đăng nhập, thât bại sẽ hiển thị thông báo
 		if (result) {
 			HttpSession session = request.getSession();
 			session.setAttribute("userEmail", email);

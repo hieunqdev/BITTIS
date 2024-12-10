@@ -10,9 +10,7 @@ import javax.persistence.TypedQuery;
 import Model.KhachHang;
 
 public class KhachHangDAO {
-	// kết nối csdl
 	EntityManagerFactory factory = Persistence.createEntityManagerFactory("BIITS");
-	// truy vấn csdl
 	EntityManager em = factory.createEntityManager();
 	
 	public void create(KhachHang kh) {
@@ -25,6 +23,7 @@ public class KhachHangDAO {
 		}
 	}
 	
+//	hàm kiểm tra đăng nhập, nếu đúng trả về true
 	public boolean login(String email, String matKhau) {
 		String jpql = "SELECT k FROM KhachHang k WHERE k.Email = :Email AND k.MatKhau = :MatKhau";
         TypedQuery<KhachHang> query = em.createQuery(jpql, KhachHang.class);
