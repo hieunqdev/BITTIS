@@ -5,47 +5,65 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import DAO.KhachHangDAO;
 import Model.KhachHang;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-/**
- * Servlet implementation class KhachHangController
- */
-@WebServlet("/register")
+@WebServlet({"/register", "/login"})
 public class KhachHangController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		request.getRequestDispatcher("view/register.jsp").forward(request, response);
+		String path = request.getServletPath();
+		switch (path) {
+			case "/register":
+				request.getRequestDispatcher("view/register.jsp").forward(request, response);
+			case "/login":
+				request.getRequestDispatcher("view/login.jsp").forward(request, response);
+			default:
+				break;
+		}
+		
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		String path = request.getServletPath();
 		String action = request.getParameter("action");
-		if (action.equals("register")) {
-			try {
-				register(request, response);
-			} catch (ServletException | IOException | ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		
+		switch (path) {
+			case "/register":
+				if (action.equals("register")) {
+					try {
+						register(request, response);
+					} catch (ServletException | IOException | ParseException e) {
+						e.printStackTrace();
+					}
+				}
+			case "/login":
+				if(action.equals("login")) {
+					try {
+						login(request, response);
+					} catch (ServletException | IOException | ParseException e) {
+						e.printStackTrace();
+					}
+				}
+			default:
+				break;
 		}
+		
+		
 	}
 	
+//	hàm đăng ký
 	private void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
 		String MaKHRandom = generateRandomString(4);
 		String Ho = request.getParameter("Ho");
@@ -63,8 +81,10 @@ public class KhachHangController extends HttpServlet {
 		KhachHangDAO khd = new KhachHangDAO();
 		KhachHang kh = new KhachHang(MaKHRandom, Ho, Ten, GioiTinh, NgaySinh, Email, SDT, MatKhau);
 		khd.create(kh);
+		request.getRequestDispatcher("view/login.jsp").forward(request, response);
 	}
 	
+//	hàm tạo 1 mã khách hàng ngẫu nhiên
 	public static String generateRandomString(int length) {
         String alphabet = "abcdefghijklmnopqrstuvwxyz";
 
@@ -73,4 +93,20 @@ public class KhachHangController extends HttpServlet {
                 .collect(Collectors.joining());
     }
 
+	private void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ParseException {
+		String email = request.getParameter("email");
+		String matKhau = request.getParameter("password");
+		
+		KhachHangDAO khd = new KhachHangDAO();
+		boolean result = khd.login(email, matKhau);
+		if (result) {
+			HttpSession session = request.getSession();
+			session.setAttribute("userEmail", email);
+			request.getRequestDispatcher("view/index.jsp").forward(request, response);
+		} else {
+			String message = "Đăng nhập thất bại!";
+		    request.setAttribute("notification", message);
+			request.getRequestDispatcher("view/login.jsp").forward(request, response);
+		}
+	}
 }

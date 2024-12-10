@@ -11,8 +11,8 @@
 <body>
     <div class="register-container">
         <div class="register-header">
-            <h2 class="active"><a href="login.jsp">ĐĂNG NHẬP</a></h2>
-            <h2 class="inactive"><a href="register.jsp">ĐĂNG KÝ</a></h2>
+            <h2 class="active"><a href="login">ĐĂNG NHẬP</a></h2>
+            <h2 class="inactive"><a href="register">ĐĂNG KÝ</a></h2>
         </div>
         <form class="register-form" action="register" method="post">
             <label for="last-name">Họ:</label>
